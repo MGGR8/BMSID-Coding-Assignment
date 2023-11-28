@@ -1,0 +1,27 @@
+FUNCTION rotate_point(point, angle, line_direction_cosines):
+    angle = DEGREES_TO_RADIANS(angle)
+    rotation_matrix = COMPUTE_ROTATION_MATRIX(angle, line_direction_cosines)
+    rotated_point = MATRIX_MULTIPLY(rotation_matrix, point)
+    RETURN rotated_point
+
+FUNCTION get_fourth_atom_coordinates(first_atom, second_atom, third_atom, bond_length, bond_angle, dihedral_angle):
+    p = COMPUTE_VECTOR(second_atom - first_atom)
+    q = COMPUTE_VECTOR(third_atom - second_atom)
+    ABC_plane_normal = NORMALIZE(CROSS_PRODUCT(p, q))
+    unit_vector_along_q = NORMALIZE(q)
+    initial_pos = bond_length * unit_vector_along_q
+    rotated_pos = rotate_point(initial_pos, 180 - bond_angle, ABC_plane_normal)
+    final_pos = rotate_point(rotated_pos, dihedral_angle, unit_vector_along_q)
+    RETURN final_pos + third_atom
+
+IF __name__ == '__main__':
+    FOR i FROM 0 TO 2:
+        atom_coordinates[i] = GET_USER_INPUT("Enter coordinates for atom " + (i + 1))
+    
+    bond_length = GET_USER_INPUT("Enter bond length")
+    bond_angle = GET_USER_INPUT("Enter bond angle in degrees")
+    dihedral_angle = GET_USER_INPUT("Enter dihedral angle in degrees")
+
+    fourth_atom_coordinates = get_fourth_atom_coordinates(atom_coordinates[0], atom_coordinates[1], atom_coordinates[2], bond_length, bond_angle, dihedral_angle)
+
+    PRINT("Coordinates of fourth atom are:", fourth_atom_coordinates)
